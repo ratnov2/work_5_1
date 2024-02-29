@@ -19,7 +19,7 @@ export const fetchData = (
 ) => {
   const headers = {
     "Content-Type": "application/json",
-    "X-Auth": "36c58664c6a85656502117384b351c40",
+    "X-Auth": "5b62cae4a318925144c8b1cee2bd5fde",
   };
 
   const options: RequestInit = { method, headers };

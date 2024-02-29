@@ -1,66 +1,72 @@
 import { TypeFilter } from "../type";
 import { fetchData, mainUrl } from "./api";
 
+export type TFilteredSelect = "brand" | "product" | "price";
+export type TFilteredObj = {
+  brand?: string;
+  product?: string;
+  price?: number;
+};
+
 export const Service = {
   async getGoodsByActionFilter(
-    filteredSelect: {
-      [key: string]: string | number;
-    },
-    offset = 0,
-    limit = 50
+    filteredSelect: TFilteredObj
+    // offset = 0,
+    // limit = 50
   ) {
-    const set = new Set();
     const response = await fetchData(mainUrl(""), "POST", {
       action: "filter",
       params: { ...filteredSelect },
     });
-    const addResponse: {
-      isEndPagination: boolean;
-      result?: string[];
-      itemLength: number;
-    } = {
-      isEndPagination: false,
-      itemLength: response.result.length,
-    };
-    if (response.result.length <= 0) addResponse.isEndPagination = true;
-    for (let i = 0; i < response.result.length && set.size < limit; i++) {
-      set.add(response.result[i]);
-    }
+    return response;
+    // const addResponse: {
+    //   isEndPagination: boolean;
+    //   result?: string[];
+    //   itemLength: number;
+    // } = {
+    //   isEndPagination: false,
+    //   itemLength: response.result.length,
+    // };
+    // if (response.result.length <= 0) addResponse.isEndPagination = true;
+    // for (let i = 0; i < response.result.length && set.size < limit; i++) {
+    //   set.add(response.result[i]);
+    // }
 
-    const items = await getItems(Array.from(set.values()) as string[]);
-    const res = {
-      items: items.result,
-      ...addResponse,
-    };
-    return res;
+    // const items = await getItems(Array.from(set.values()) as string[]);
+    // const res = {
+    //   items: items.result,
+    //   ...addResponse,
+    // };
+    // return res;
   },
-  async getGoods(offset: number = 0, limit: number = 40) {
+  async getGoods() {
     const set = new Set();
     const response = await fetchData(mainUrl(""), "POST", {
       action: "get_ids",
-      params: { offset, limit },
+      // params: { offset, limit },
     });
 
-    const addResponse: { isEndPagination: boolean; result?: string[] } = {
-      isEndPagination: false,
-    };
-    if (response.result.length <= 0) addResponse.isEndPagination = true;
+    // const addResponse: { isEndPagination: boolean; result?: string[] } = {
+    //   isEndPagination: false,
+    // };
+    // if (response.result.length <= 0) addResponse.isEndPagination = true;
 
-    response.result.map((item: string) => set.add(item));
+    // response.result.map((item: string) => set.add(item));
 
-    const items = await getItems(Array.from(set.values()) as string[]);
-    const res = {
-      offset,
-      limit,
-      items: items.result,
-    };
-    return res;
+    // const items = await getItems(Array.from(set.values()) as string[]);
+    // const res = {
+    //   offset,
+    //   limit,
+    //   items: items.result,
+    // };
+    //return res;
+    return response;
   },
   async getGoodsByField(field: TypeFilter, offset = 0, limit = 30) {
     const params: { [key: string]: number | string } = {
       field,
-      offset,
-      limit,
+      // offset,
+      // limit,
     };
     const response = await fetchData(mainUrl(""), "POST", {
       action: "get_fields",
@@ -76,6 +82,13 @@ export const Service = {
     );
 
     return addResponse;
+  },
+  async getItems(data: string[]) {
+    const response = await fetchData(mainUrl(""), "POST", {
+      action: "get_items",
+      params: { ids: data },
+    });
+    return response;
   },
 };
 

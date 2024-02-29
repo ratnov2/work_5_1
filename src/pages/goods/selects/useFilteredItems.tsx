@@ -13,11 +13,11 @@ export const useFilteredItems = (type: TypeFilter) => {
     let offsetVar = offset;
     if (typeClick === "left" && offset - limit < 0) {
       offsetVar = 0;
-      setOffset(0);
+      setOffset(offsetVar);
     }
     if (typeClick === "right" && !isEndPagination) {
       offsetVar = offset + limit;
-      setOffset(offset + limit);
+      setOffset(offsetVar);
     }
     setIsLoading(true);
     Service.getGoodsByField(type, offsetVar).then((items) => {

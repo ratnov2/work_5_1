@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 
 interface IBrandSelect {
   loadingSelect: boolean;
@@ -21,6 +21,19 @@ export const SelectItem: FC<IBrandSelect> = ({
   isEndPagination,
   offset,
 }) => {
+  const [inputValue, setInputValue] = useState("");
+  const [selectedValue, setSelectedValue] = useState("");
+  const handleChange = (e: any) => {
+    setInputValue(e.target.value.trim().toLowerCase());
+  };
+
+  const handleSelectChange = (e: any) => {
+    setSelectedValue(e.target.value);
+  };
+
+  const filteredData = items.filter((item) =>
+    item.toLowerCase().includes(inputValue)
+  );
   return (
     <div>
       <h1>
@@ -28,15 +41,23 @@ export const SelectItem: FC<IBrandSelect> = ({
         {`(offset = ${offset})`}
         {`(isLoading = ${loadingSelect})`}
       </h1>
+      <input
+        type="text"
+        value={inputValue}
+        onChange={handleChange}
+        placeholder="Введите значение"
+      />
       <button disabled={loadingSelect} onClick={() => getInfo()}>
         Получить доступные бренды
       </button>
       <select
-        onChange={(e) => setSelectInfo(e.currentTarget.value)}
-        value={currentValueInSelect}
+        // onChange={(e) => setSelectInfo(e.currentTarget.value)}
+        // value={currentValueInSelect}
+        value={selectedValue}
+        onChange={handleSelectChange}
       >
         <option>Ничего не выбрано</option>
-        {items.map((item: string, key) => (
+        {filteredData.map((item: string, key) => (
           <option key={key}>{item}</option>
         ))}
       </select>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { FC, createContext, useEffect, useState } from "react";
 import { Service } from "../../api/service";
 import { TGoods } from "../../type";
 import style from "./goods.module.css";
@@ -6,12 +6,19 @@ import { WithBrandSelect } from "./selects/WithSelect/WithBrandSelect";
 import { WithProductSelect } from "./selects/WithSelect/WithProductSelect";
 import { WithPriceSelect } from "./selects/WithSelect/WithPriceSelect";
 import Paginator from "./paginator/Paginator";
+import { GoodsPage } from "./goods-page/GoodsPage";
+import { FilterGoods } from "../filter/Filter";
+//const GoodsContext = createContext({});
+export type TTypeGoods = null | "goods" | "filtered_goods";
 export const Goods = () => {
   const [currentPagination, setCurrentPagination] = useState<
     "filter" | "getAllGoods"
   >("getAllGoods");
   //
+  const [typeGoods, setTypeGoods] = useState<TTypeGoods>(null);
   const [goods, setGoods] = useState<TGoods[]>([]);
+  const [goodsIds, setGoodsIds] = useState<string[]>([]);
+  const [filterIds, setFilterIds] = useState<string[]>([]);
   const [goodsInfo, setGoodsInfo] = useState<number>();
   const [isEndPagination, setIsEndpagination] = useState(true);
 
@@ -20,43 +27,12 @@ export const Goods = () => {
   const [currentLimit, setCurrentLimit] = useState(10);
   /////
   const [loadingGoods, setLoadingGoods] = useState(false);
-  //
-  const [pricesSelect, setPricesSelect] = useState<string>("Ничего не выбрано");
-  const [brandsSelect, setBrandsSelect] = useState<string>("Ничего не выбрано");
-  const [productsSelect, setProductsSelect] =
-    useState<string>("Ничего не выбрано");
   ////
-
-  const getFilteredGoods = (offset = currentOffset, limit = currentLimit) => {
-    const filteredItems: { [key: string]: number | string } = {};
-    if (pricesSelect !== "Ничего не выбрано")
-      filteredItems.price = +pricesSelect;
-    if (brandsSelect !== "Ничего не выбрано")
-      filteredItems.brand = brandsSelect;
-    if (productsSelect !== "Ничего не выбрано")
-      filteredItems.product = productsSelect;
-    Service.getGoodsByActionFilter(filteredItems).then(
-      ({ items, itemLength, isEndPagination }) => {
-        setGoods(items);
-        setGoodsInfo(itemLength);
-        setLoadingGoods(false);
-      }
-    );
-  };
 
   const getGoods = (offset = currentOffset, limit = currentLimit) => {
     if (currentPagination === "filter") offset = 0;
     setLoadingGoods(true);
-    Service.getGoods(offset, limit).then(({ items }) => {
-      setGoods(items);
-      setIsEndpagination(items.isEndPagination);
-      setLoadingGoods(false);
-    });
   };
-  const isDisabledFilteredButton = () =>
-    pricesSelect === "Ничего не выбрано" &&
-    brandsSelect === pricesSelect &&
-    productsSelect === brandsSelect;
 
   const handleClickLeft = () => {
     let offsetVar = currentOffset - currentLimit;
@@ -69,9 +45,16 @@ export const Goods = () => {
       }
       currentPagination === "getAllGoods" && getGoods(offsetVar);
     }
-    // else if(currentPagination === 'filter'){
-
-    // }
+  };
+  const onPageChange = async (page: number) => {
+    if (goodsIds) {
+      const listLimitedIds = goodsIds.slice(
+        currentLimit * (page - 1),
+        currentLimit * (page - 1) + currentLimit
+      );
+      const goods = await Service.getItems(listLimitedIds);
+      setGoods(goods.result);
+    }
   };
   const handleClickRight = () => {
     let offsetVar = currentOffset;
@@ -83,37 +66,37 @@ export const Goods = () => {
   };
   return (
     <div>
+      <GoodsPage
+        onSetGoods={(goods) => setGoods(goods)}
+        onSetGoodsIds={(ids) => setGoodsIds(ids)}
+        listIds={goodsIds}
+        typeGoods={typeGoods}
+        onSetTypeGoods={(type) => setTypeGoods(type)}
+      />
+      <FilterGoods
+        setGoods={(items) => setGoods(items)}
+        setLoadingGoods={(isLoad) => setLoadingGoods(isLoad)}
+        listIds={filterIds}
+        onSetGoods={(goods) => setGoods(goods)}
+        onSetGoodsIds={(ids) => setFilterIds(ids)}
+        typeGoods={typeGoods}
+        onSetTypeGoods={(type) => setTypeGoods(type)}
+      />
       <h1>Просто получить список товаров без фильтра</h1>
       <button disabled={loadingGoods} onClick={() => getGoods()}>
         Get Goods
       </button>
-      <WithBrandSelect select={brandsSelect} setSelect={setBrandsSelect} />
-      <WithProductSelect
-        select={productsSelect}
-        setSelect={setProductsSelect}
-      />
-      <WithPriceSelect select={pricesSelect} setSelect={setPricesSelect} />
-      <h1>
-        Для того, чтобы сделать выборку по фильтру, выберите в селекте нужный
-        элемент и нажмите кнопку ниже
-      </h1>
-      <button
-        disabled={isDisabledFilteredButton()}
-        onClick={() => getFilteredGoods()}
-      >
-        Получить отфильтрованный список
-      </button>
+
       <h1>
         Ваши товары{" "}
         {`(offset = ${currentOffset}) isLoading = ${loadingGoods} // length = ${goodsInfo}`}
       </h1>
-      {goodsInfo && (
-        <Paginator
-          totalItems={goodsInfo}
-          itemsPerPage={currentLimit}
-          onPageChange={() => ""}
-        />
-      )}
+      {GetPaginatorByTypeGoods({
+        filterIds,
+        goodsIds,
+        typeGoods,
+        paginatorProps: { itemsPerPage: currentLimit, onPageChange },
+      })}
       <div>
         <button
           disabled={goods.length === 0 || currentOffset <= 0 || loadingGoods}
@@ -130,18 +113,64 @@ export const Goods = () => {
           Click Right
         </button>
       </div>
-      {goods.length !== 0 ? (
-        goods.map((item) => (
-          <article className={style.goods}>
-            <h2>{item.product}</h2>
-            <h2>{item.brand || "No Brand"}</h2>
-            <h2>{item.price}</h2>
-            <h2>{item.id}</h2>
-          </article>
-        ))
-      ) : (
-        <div>Упс, по вашему запросу ничего не найдено</div>
-      )}
+
+      {GetComponentByTypeGoods({
+        goods,
+        typeGoods,
+      })}
     </div>
+  );
+};
+
+interface IListGoods {
+  goods: TGoods[];
+}
+interface IGetComponentByTypeGoods {
+  typeGoods: TTypeGoods;
+  goods: TGoods[];
+}
+const GetComponentByTypeGoods = ({
+  goods,
+  typeGoods,
+}: IGetComponentByTypeGoods) => {
+  if (typeGoods === null) return null;
+  if (!typeGoods === null && goods.length === 0)
+    return <div>Упс, по вашему запросу ничего не найдено</div>;
+  return <ListGoods goods={goods} />;
+};
+interface IGetPaginatorByTypeGoods {
+  goodsIds: string[];
+  filterIds: string[];
+  typeGoods: TTypeGoods;
+  paginatorProps: {
+    itemsPerPage: number;
+    onPageChange: (page: number) => void;
+  };
+}
+const GetPaginatorByTypeGoods = ({
+  goodsIds,
+  filterIds,
+  typeGoods,
+  paginatorProps,
+}: IGetPaginatorByTypeGoods) => {
+  if (typeGoods === null || (goodsIds.length === 0 && filterIds.length === 0))
+    return null;
+  if (typeGoods === "goods")
+    return <Paginator totalItems={goodsIds.length} {...paginatorProps} />;
+  if (typeGoods === "filtered_goods")
+    return <Paginator totalItems={filterIds.length} {...paginatorProps} />;
+};
+const ListGoods: FC<IListGoods> = ({ goods }) => {
+  return (
+    <>
+      {goods.map((item) => (
+        <article className={style.goods}>
+          <h2>{item.product}</h2>
+          <h2>{item.brand || "No Brand"}</h2>
+          <h2>{item.price}</h2>
+          <h2>{item.id}</h2>
+        </article>
+      ))}
+    </>
   );
 };

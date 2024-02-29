@@ -15,9 +15,9 @@ export const Paginator: FC<IPaginator> = ({
 
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = async (page: number) => {
+    await onPageChange(page);
     setCurrentPage(page);
-    onPageChange(page);
   };
 
   const renderPageNumbers = () => {
