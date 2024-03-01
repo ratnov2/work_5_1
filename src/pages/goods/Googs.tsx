@@ -7,7 +7,7 @@ import { WithProductSelect } from "./selects/WithSelect/WithProductSelect";
 import { WithPriceSelect } from "./selects/WithSelect/WithPriceSelect";
 import Paginator from "./paginator/Paginator";
 import { GoodsPage } from "./goods-page/GoodsPage";
-import { FilterGoods } from "../filter/Filter";
+import { FilterGoods } from "../filter/FilterGoods";
 //const GoodsContext = createContext({});
 export type TTypeGoods = null | "goods" | "filtered_goods";
 export const Goods = () => {
@@ -74,7 +74,6 @@ export const Goods = () => {
         onSetTypeGoods={(type) => setTypeGoods(type)}
       />
       <FilterGoods
-        setGoods={(items) => setGoods(items)}
         setLoadingGoods={(isLoad) => setLoadingGoods(isLoad)}
         listIds={filterIds}
         onSetGoods={(goods) => setGoods(goods)}

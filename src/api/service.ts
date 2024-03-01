@@ -62,26 +62,17 @@ export const Service = {
     //return res;
     return response;
   },
-  async getGoodsByField(field: TypeFilter, offset = 0, limit = 30) {
+  async getGoodsByField(field: TypeFilter){
     const params: { [key: string]: number | string } = {
       field,
-      // offset,
-      // limit,
     };
     const response = await fetchData(mainUrl(""), "POST", {
       action: "get_fields",
       params,
     });
-    const addResponse: { isEndPagination: boolean; result?: string[] } = {
-      isEndPagination: false,
-    };
-    if (response.result.length <= 0) addResponse.isEndPagination = true;
-
-    addResponse.result = response.result.filter(
-      (element: string | null) => !!element
-    );
-
-    return addResponse;
+    const set = new Set(response.result);
+    set.delete(null);
+    return [...set.values()] as string[];
   },
   async getItems(data: string[]) {
     const response = await fetchData(mainUrl(""), "POST", {

@@ -1,0 +1,12 @@
+.select {
+  position: relative;
+  width: fit-content;
+}
+.select .selectItems {
+  position: absolute;
+  background: white;
+  overflow-y: scroll;
+  height: 200px;
+  z-index: 10;
+  width: 100%;
+}
