@@ -1,11 +1,8 @@
-import { FC, useContext, useState } from "react";
-import { WithBrandSelect } from "../goods/selects/WithSelect/WithBrandSelect";
-import { WithPriceSelect } from "../goods/selects/WithSelect/WithPriceSelect";
-import { WithProductSelect } from "../goods/selects/WithSelect/WithProductSelect";
-import { Service, TFilteredObj } from "../../api/service";
-import { TGoods } from "../../type";
-import { TTypeGoods } from "../goods/Googs";
-import { PageInfoContext } from "../../contexts/PageInfoContext";
+import { FC } from "react";
+import { WithBrandSelect } from "../selects/WithSelect/WithBrandSelect";
+import { WithPriceSelect } from "../selects/WithSelect/WithPriceSelect";
+import { WithProductSelect } from "../selects/WithSelect/WithProductSelect";
+import { TGoods, TTypeGoods } from "../../../type";
 import { useFilterGoods } from "./useFilterGoods";
 
 interface IFilterGoods {
@@ -18,19 +15,16 @@ interface IFilterGoods {
 }
 
 export const FilterGoods: FC<IFilterGoods> = ({
-  setLoadingGoods,
   listIds,
   onSetGoods,
   onSetGoodsIds,
   onSetTypeGoods,
   typeGoods,
+  setLoadingGoods
 }) => {
   const {
-    brandsSelect,
     setBrandsSelect,
-    productsSelect,
     setProductsSelect,
-    pricesSelect,
     setPricesSelect,
     isDisabledFilteredButton,
     handleRequest,
@@ -40,16 +34,14 @@ export const FilterGoods: FC<IFilterGoods> = ({
     onSetGoodsIds,
     onSetTypeGoods,
     typeGoods,
+    setLoadingGoods
   });
-  ////
+
   return (
     <div>
-      <WithBrandSelect select={brandsSelect} setSelect={setBrandsSelect} />
-      <WithProductSelect
-        select={productsSelect}
-        setSelect={setProductsSelect}
-      />
-      <WithPriceSelect select={pricesSelect} setSelect={setPricesSelect} />
+      <WithBrandSelect setSelect={setBrandsSelect} />
+      <WithProductSelect setSelect={setProductsSelect} />
+      <WithPriceSelect setSelect={setPricesSelect} />
       <h1>
         Для того, чтобы сделать выборку по фильтру, выберите в селекте нужный
         элемент и нажмите кнопку ниже

@@ -1,8 +1,7 @@
 import { FC, useContext, useState } from "react";
-import { Service, TFilteredObj } from "../../api/service";
-import { PageInfoContext } from "../../contexts/PageInfoContext";
-import { TGoods } from "../../type";
-import { TTypeGoods } from "../goods/Googs";
+import { Service, TFilteredObj } from "../../../api/service";
+import { PageInfoContext } from "../../../contexts/PageInfoContext";
+import { TGoods, TTypeGoods } from "../../../type";
 
 interface IUseFilterGoods {
   onSetGoodsIds: (items: string[]) => void;
@@ -10,6 +9,7 @@ interface IUseFilterGoods {
   listIds: string[] | null;
   typeGoods: TTypeGoods;
   onSetTypeGoods: (type: TTypeGoods) => void;
+  setLoadingGoods: (isLoad: boolean) => void;
 }
 
 export const useFilterGoods = ({
@@ -21,14 +21,12 @@ export const useFilterGoods = ({
 }: IUseFilterGoods) => {
   const { limit, offset } = useContext(PageInfoContext);
   const [isFirstRequest, setIsFirstRequest] = useState(true);
-
-  const [currentLimit, setCurrentLimit] = useState(limit);
-  const [currentOffset, setCurrentOffset] = useState(offset);
   const [keyCacheState, setKeyCacheState] = useState("");
-
   const [pricesSelect, setPricesSelect] = useState<string>("");
   const [brandsSelect, setBrandsSelect] = useState<string>("");
   const [productsSelect, setProductsSelect] = useState<string>("");
+
+  const [loading, setLoading] = useState(false);
 
   const handleRequest = async () => {
     const filteredItems: TFilteredObj = {};
@@ -45,32 +43,28 @@ export const useFilterGoods = ({
       filteredItems.product = productsSelect;
       keyCache.push(filteredItems.product);
     }
+    setLoading(true);
     keyCache = keyCache.join("_");
-
+    let listLimitedIds = [];
     if (keyCache !== keyCacheState) setKeyCacheState(keyCache);
     if (isFirstRequest || keyCache !== keyCacheState) {
       const listIds = await Service.getGoodsByActionFilter(filteredItems);
       onSetGoodsIds(listIds.result);
-      const listLimitedIds = listIds.result.slice(
-        currentOffset,
-        currentOffset + currentLimit
-      );
+      listLimitedIds = listIds.result.slice(offset, offset + limit);
       setIsFirstRequest(false);
-      const goods = await Service.getItems(listLimitedIds);
-      onSetGoods(goods.result);
     } else {
-      const listLimitedIds = listIds
-        ? listIds.slice(currentOffset, currentOffset + currentLimit)
-        : [];
-      const goods = await Service.getItems(listLimitedIds);
-      onSetGoods(goods.result);
+      listLimitedIds = listIds ? listIds.slice(offset, offset + limit) : [];
     }
+    const goods = await Service.getItems(listLimitedIds);
+    onSetGoods(goods.result);
     typeGoods !== "filtered_goods" && onSetTypeGoods("filtered_goods");
+    setLoading(false);
   };
   const isDisabledFilteredButton =
-    pricesSelect === "" &&
-    brandsSelect === pricesSelect &&
-    productsSelect === brandsSelect;
+    (pricesSelect === "" &&
+      brandsSelect === pricesSelect &&
+      productsSelect === brandsSelect) ||
+    loading;
   return {
     brandsSelect,
     setBrandsSelect,
