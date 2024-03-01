@@ -5,3 +5,5 @@ export type TGoods = {
   product: string;
 };
 export type TypeFilter = "product" | "brand" | "price";
+
+export type TTypeGoods = null | "goods" | "filtered_goods";

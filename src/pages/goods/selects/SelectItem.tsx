@@ -1,64 +1,70 @@
-import { FC } from "react";
-
-interface IBrandSelect {
-  loadingSelect: boolean;
-  getInfo: (type?: "left" | "right") => void;
-  setSelectInfo: (e: string) => void;
-  currentValueInSelect: string;
-  items: string[];
-  title: string;
-  isEndPagination: boolean;
-  offset: number;
-}
+import { FC, useRef, useState } from "react";
+import style from "./SelectItem.module.css";
+import { useMissClickSelect } from "./hooks/useMissClickSelect";
+import { IBrandSelect } from "./interface";
 
 export const SelectItem: FC<IBrandSelect> = ({
   getInfo,
   loadingSelect,
-  currentValueInSelect,
   setSelectInfo,
   items,
   title,
-  isEndPagination,
-  offset,
+  buttonTitle,
 }) => {
+  const [inputValue, setInputValue] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [filteredOptions, setFilteredOptions] = useState<string[]>(items);
+
+  const handleInputChange = (e: string) => {
+    const value = e.trim();
+    setInputValue(value);
+    const filtered = items.filter((option) => option.includes(value));
+    setFilteredOptions(filtered);
+    setIsOpen(filtered.length > 0);
+    setSelectInfo(value);
+  };
+  const handleOptionClick = (value: string) => {
+    setInputValue(value);
+    setIsOpen(false);
+    setSelectInfo(value);
+  };
+
+  const inputRef = useRef<HTMLDivElement>(null);
+
+  useMissClickSelect(inputRef, isOpen, (isOpen) => setIsOpen(isOpen));
+
   return (
     <div>
       <h1>
         {title}
-        {`(offset = ${offset})`}
         {`(isLoading = ${loadingSelect})`}
       </h1>
-      <button disabled={loadingSelect} onClick={() => getInfo()}>
-        Получить доступные бренды
-      </button>
-      <select
-        onChange={(e) => setSelectInfo(e.currentTarget.value)}
-        value={currentValueInSelect}
-      >
-        <option>Ничего не выбрано</option>
-        {items.map((item: string, key) => (
-          <option key={key}>{item}</option>
-        ))}
-      </select>
-      <h3>Для загрузки дополнительных данных пролистайте дальше</h3>
-      <div>
-        <button
-          disabled={offset === 0 || loadingSelect}
-          onClick={() => {
-            getInfo("left");
-          }}
-        >
-          Click Left
-        </button>
-        <button
-          disabled={isEndPagination || loadingSelect}
-          onClick={() => {
-            getInfo("right");
-          }}
-        >
-          Click Right
-        </button>
+      <div className={style.select} ref={inputRef}>
+        <input
+          type="text"
+          value={inputValue}
+          disabled={items.length === 0}
+          onClick={() => !isOpen && handleInputChange(inputValue)}
+          onChange={(e) => handleInputChange(e.currentTarget.value)}
+          placeholder="Введите значение"
+        />
+        {isOpen && (
+          <div className={style.selectItems}>
+            {filteredOptions.map((option, index) => (
+              <div
+                key={index}
+                className="select-item"
+                onClick={() => handleOptionClick(option)}
+              >
+                {option}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
+      <button disabled={loadingSelect} onClick={() => getInfo()}>
+        {buttonTitle}
+      </button>
     </div>
   );
 };
