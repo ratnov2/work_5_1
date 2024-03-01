@@ -1,14 +1,10 @@
+import md5 from "md5";
 export const mainUrl = (url: string) =>
   `http://api.valantis.store:40000/${url}`;
 
-// export type CustomPromise<T, F = any> = {
-//   catch<TResult = never>(
-//     onrejected?:
-//       | ((reason: F) => TResult | PromiseLike<TResult>)
-//       | undefined
-//       | null
-//   ): Promise<T | TResult>;
-// } & Promise<T>;
+const addZeroInBeginDate = (number: number) => {
+  if (number < 10) return `0${number}`;
+};
 
 export const fetchData = (
   url: string,
@@ -17,9 +13,16 @@ export const fetchData = (
   retries = 200,
   delay = 1000
 ) => {
+  const date = new Date();
   const headers = {
     "Content-Type": "application/json",
-    "X-Auth": "d6d2e7f7df174fbd03e83b5abe40eeff",
+    "X-Auth": md5(
+      `${
+        process.env.REACT_APP_SECRET_AUTH
+      }_${date.getFullYear()}${addZeroInBeginDate(
+        date.getMonth() + 1
+      )}${addZeroInBeginDate(date.getDate())}`
+    ),
   };
 
   const options: RequestInit = { method, headers };

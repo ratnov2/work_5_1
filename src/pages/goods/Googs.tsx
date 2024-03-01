@@ -15,7 +15,7 @@ export const Goods = () => {
   const [goods, setGoods] = useState<TGoods[]>([]);
   const [goodsIds, setGoodsIds] = useState<string[]>([]);
   const [filterIds, setFilterIds] = useState<string[]>([]);
-
+  
   /////
   const [loadingGoods, setLoadingGoods] = useState(false);
   ////
