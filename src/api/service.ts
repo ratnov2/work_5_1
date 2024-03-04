@@ -32,7 +32,8 @@ export const Service = {
     });
     const set = new Set<string | null>(response.result);
     set.delete(null);
-    return [Array.from(set.values())] as unknown as string[] ;
+
+    return Array.from(set.values()) as unknown as string[];
   },
   async getItems(data: string[]) {
     const response = await fetchData(mainUrl(""), "POST", {

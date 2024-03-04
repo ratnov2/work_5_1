@@ -5,6 +5,7 @@ import { IWithSelect } from "../interface";
 
 export const WithPriceSelect: FC<IWithSelect> = ({ setSelect }) => {
   const { isLoading, items, getFilteredItems } = useFilteredItems("price");
+  
   return (
     <SelectItem
       getInfo={getFilteredItems}

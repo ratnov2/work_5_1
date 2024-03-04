@@ -10,7 +10,7 @@ export const fetchData = (
   url: string,
   method: string,
   data?: any,
-  retries = 200,
+  retries = 3,
   delay = 1000
 ) => {
   const date = new Date();

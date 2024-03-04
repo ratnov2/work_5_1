@@ -20,5 +20,5 @@ export const useMissClickSelect = (
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [isOpen, inputRef, setIsOpen]);
+  }, [isOpen]);
 };
