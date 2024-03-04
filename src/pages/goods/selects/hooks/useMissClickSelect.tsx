@@ -20,5 +20,6 @@ export const useMissClickSelect = (
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 };
