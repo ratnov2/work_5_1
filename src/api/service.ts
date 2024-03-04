@@ -30,9 +30,9 @@ export const Service = {
       action: "get_fields",
       params,
     });
-    const set = new Set(response.result);
+    const set = new Set<string | null>(response.result);
     set.delete(null);
-    return [...set.values()] as string[];
+    return [Array.from(set.values())] as unknown as string[] ;
   },
   async getItems(data: string[]) {
     const response = await fetchData(mainUrl(""), "POST", {
