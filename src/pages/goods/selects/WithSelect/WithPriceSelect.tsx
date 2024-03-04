@@ -1,5 +1,4 @@
-import { FC, useState } from "react";
-import { Service } from "../../../../api/service";
+import { FC } from "react";
 import { SelectItem } from "../SelectItem";
 import { useFilteredItems } from "../hooks/useFilteredItems";
 import { IWithSelect } from "../interface";

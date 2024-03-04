@@ -1,6 +1,5 @@
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useContext, useState } from "react";
 import { Service } from "../../../api/service";
-import Paginator from "../paginator/Paginator";
 import { TGoods, TTypeGoods } from "../../../type";
 import { PageInfoContext } from "../../../contexts/PageInfoContext";
 

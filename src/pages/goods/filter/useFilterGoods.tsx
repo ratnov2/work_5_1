@@ -1,4 +1,4 @@
-import { FC, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { Service, TFilteredObj } from "../../../api/service";
 import { PageInfoContext } from "../../../contexts/PageInfoContext";
 import { TGoods, TTypeGoods } from "../../../type";

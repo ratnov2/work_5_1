@@ -9,7 +9,7 @@ import { GetComponentByTypeGoods } from "./goods-render/GoodsRender";
 export const GoodsContextPageInfo = createContext({});
 
 export const Goods = () => {
-  const { limit, offset } = useContext(PageInfoContext);
+  const { limit } = useContext(PageInfoContext);
 
   const [typeGoods, setTypeGoods] = useState<TTypeGoods>(null);
   const [goods, setGoods] = useState<TGoods[]>([]);
