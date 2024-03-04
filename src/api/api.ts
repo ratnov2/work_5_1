@@ -1,7 +1,7 @@
 import md5 from "md5";
 
 export const mainUrl = (url: string) =>
-  `http://api.valantis.store:40000/${url}`;
+  `https://api.valantis.store:41000/${url}`;
 
 const addZeroInBeginDate = (number: number) => {
   if (number < 10) return `0${number}`;
