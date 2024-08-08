@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap');
+@import 'animate.css';
+@import './main.scss';
+@import './progress-circle.scss';
+@import './progress-bar.scss';
+@import './fonts.scss';
+@import './upgrade.scss';
+@import './glitch.scss';
+@import './animations.scss';
+
+.swiper-pagination-bullet-active {
+    background: #fb923c !important;
+    opacity: 1 !important;
+}

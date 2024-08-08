@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.bg-default {
+    @apply bg-gradient-to-br from-gray-650 to-gray-850;
+}
+
+.bg-default-light {
+    @apply bg-gradient-to-br from-gray-700 to-gray-900;
+}
+
+.input-default {
+    @apply focus:outline-none rounded-md px-3 py-2 bg-[#322f36];
+}
+
+.skeleton {
+    @apply animate-pulse-fast;
+}
+
+.skeleton-text {
+    @apply rounded-full animate-pulse-fast bg-gray-700;
+}
+
+.skeleton-block {
+    @apply animate-pulse-fast bg-gray-700;
+}
+
+.skeleton-img {
+    @apply animate-pulse-fast bg-gradient-to-br from-gray-700 to-gray-800;
+}
+
+.condition-any-checker * {
+    width: 100%;
+}
+
+.rotate {
+    animation-name: rotate;
+    animation-duration: 5000ms;
+    animation-timing-function: linear;
+}
+
+.rotate-reverse {
+    animation-name: rotate-reverse;
+    animation-duration: 5000ms;
+    animation-timing-function: linear;
+}
+
+/* Animations */
+@keyframes rotate {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
+@keyframes rotate-reverse {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(-360deg);
+    }
+}

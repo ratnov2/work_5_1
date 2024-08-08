@@ -1,0 +1,87 @@
+// @import 'animate.css';
+
+.upgrade_arrow {
+    animation: opacity_with_delay 1s ease-in-out infinite;
+}
+
+
+@keyframes opacity_with_delay {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.1;
+        transform: scale(1);
+    }
+}
+
+.flash_light {
+    animation: flash_light 3s ease-in-out infinite;
+}
+
+@keyframes flash_light {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.2;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.start_light {
+    animation: start_light 2s ease;
+}
+
+@keyframes start_light {
+    0% {
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.2;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.move_item {
+    animation: move_item 3s ease-in-out infinite;
+}
+
+@keyframes move_item {
+    0% {
+        transform: translateY(0px) rotateZ(0deg) scale(1);
+    }
+    50% {
+        transform: translateY(-30px) rotateZ(5deg) scale(1.05);
+    }
+    100% {
+        transform: translateY(0px) rotateZ(0deg) scale(1);
+    }
+}
+
+.start_item {
+    animation: start_item 2s ease;
+}
+
+@keyframes start_item {
+    0% {
+        opacity: 0;
+        transform: translateY(50px) rotateZ(-20deg) scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-30px) rotateZ(5deg) scale(1.05);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0px) rotateZ(0deg) scale(1);
+    }
+}
